@@ -29,6 +29,10 @@ public class CustomerService {
 
 可以打印执行sql时, 所在的类名, 方法名, 和执行sql的方法名
 
+支持原生jdbc
+
+支持mybatis/hibernate等所有orm框架
+
 接入时项目修改小
 
 ## 原理
