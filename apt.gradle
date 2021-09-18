@@ -1,0 +1,10 @@
+dependencies {
+//    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+//    compileOnly "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+//    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+//    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+//    annotationProcessor "com.google.auto.service:auto-service:${autoServiceVersion}"
+//    compileOnly "com.google.auto.service:auto-service:${autoServiceVersion}"
+//
+//    testCompile "org.mapstruct:mapstruct-jdk8:${mapstructVersion}"
+}

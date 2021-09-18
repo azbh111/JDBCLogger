@@ -1,0 +1,109 @@
+buildscript {
+    ext {
+        lombokVersion = "1.18.6"
+        mapstructVersion = "1.3.0.Final"
+        autoServiceVersion = "1.0-rc2"
+        slf4jApi = "1.7.25"
+    }
+    repositories {
+        mavenLocal()
+        maven {
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.22.0"
+    }
+}
+apply plugin: 'io.codearte.nexus-staging'
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: "com.github.johnrengelman.shadow"
+
+group 'com.github.azbh111'
+version = '0.0.1'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+apply from: "apt.gradle"
+apply from: "deploy_nexus.gradle"
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'org.javassist:javassist:3.20.0-GA'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile('ch.qos.logback:logback-classic:1.2.3')
+}
+
+
+//    关闭java8变态的javadoc检查
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType(Javadoc) {
+    options.encoding = "UTF-8"
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url "http://maven.aliyun.com/nexus/content/groups/public/"
+    }
+}
+
+compileJava {
+    // 编译保留参数名字
+    options.compilerArgs << "-parameters"
+    // 将apt生成的文件放在源码目录,方便看
+    options.compilerArgs << "-s"
+    options.compilerArgs << "$projectDir/src/main/generated"
+    // 关闭mapstruct生成类注解上的时间戳
+    options.compilerArgs << "-Amapstruct.suppressGeneratorTimestamp=true"
+    // 关闭mapstruct生成类注解上的版本信息
+    options.compilerArgs << "-Amapstruct.suppressGeneratorVersionInfoComment=true"
+    // mapstruct未映射的字段,不警告
+    options.compilerArgs << "-Amapstruct.unmappedTargetPolicy=IGNORE"
+    doFirst {
+        file("$projectDir/src/main/generated").deleteDir();
+        file("$projectDir/src/main/generated").mkdirs();
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "$projectDir/src/main/generated"
+        }
+    }
+}
+
+clean.doFirst {
+    file("$projectDir/out").deleteDir();
+    file("$projectDir/build").deleteDir();
+    file("$projectDir/src/main/generated").deleteDir();
+}
+
+nexusStaging {
+    packageGroup = "com.github.azbh111"
+    username = sonatypeUsername
+    password = sonatypePassword
+}
