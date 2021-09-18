@@ -3,7 +3,8 @@ package com.github.azbh111.jdbclogger.instrument.transformers;
 import com.github.azbh111.jdbclogger.JdbcLoggerConfig;
 import com.github.azbh111.jdbclogger.LogHelper;
 import com.github.azbh111.jdbclogger.instrument.Agent;
-import com.hkamran.jdbclogger.sql.wrappers.ConnectionWrapper;
+import com.github.azbh111.jdbclogger.wrappers.ConnectionWrapper;
+import javassist.*;
 
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
