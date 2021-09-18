@@ -12,10 +12,10 @@
 
 # 用法
 
-添加java启动参数
+1. 添加java启动参数
 
   -Xbootclasspath/p:jar绝对路径 -javaagent:jar绝对路径
 
-将 System.out 重定向到slf4j
+2. 将 System.out 重定向到slf4j
 
   https://blog.csdn.net/qq_31683775/article/details/104940649 
