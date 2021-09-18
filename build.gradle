@@ -38,6 +38,13 @@ dependencies {
     testCompile('ch.qos.logback:logback-classic:1.2.3')
 }
 
+shadowJar {
+    manifest {
+        attributes 'Premain-Class': 'com.github.azbh111.jdbclogger.instrument.Agent'
+    }
+    classifier = null
+    relocate 'javassist.', 'relocate.javassist'
+}
 
 //    关闭java8变态的javadoc检查
 if (JavaVersion.current().isJava8Compatible()) {

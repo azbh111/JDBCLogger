@@ -62,7 +62,7 @@ public class StatementWrapper implements Statement {
         long stop = System.currentTimeMillis();
         long duration = stop - start;
 
-        LogHelper.log(String.format("cost %s, %s", duration, sql));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
         return result;
 
     }
@@ -79,7 +79,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.log(String.format("cost %s, %s", duration, sql));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -156,7 +156,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.log(String.format("cost %s, %s", duration, sql));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -228,7 +228,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.log(String.format("cost %s, %s", duration, queries));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, queries));
 
         return result;
     }
@@ -260,7 +260,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.log(String.format("cost %s, %s", duration, sql));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -277,7 +277,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.log(String.format("cost %s, %s", duration, sql));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -293,7 +293,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.log(String.format("cost %s, %s", duration, sql));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -310,7 +310,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.log(String.format("cost %s, %s", duration, sql));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -327,7 +327,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.log(String.format("cost %s, %s", duration, sql));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -344,7 +344,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.log(String.format("cost %s, %s", duration, sql));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }

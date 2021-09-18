@@ -1,11 +1,14 @@
 package com.github.azbh111.jdbclogger;
 
+import com.github.azbh111.jdbclogger.stacktrace.StackTraceManager;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -16,23 +19,52 @@ import java.util.Set;
  */
 public class JdbcLoggerConfig {
     private static Set<String> proxyDriverClassNames = new HashSet<>();
+    private static StackTraceManager stackTraceManager = StackTraceManager.getInstance();
 
     static {
         try {
+//            排除自己
+            stackTraceManager.getPackageExecludes().add("com.github.azbh111.");
+
             ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-            InputStream resourceAsStream = contextClassLoader.getResourceAsStream("jdbclogger.properties");
-            Properties properties = new Properties();
-            properties.load(resourceAsStream);
-            resourceAsStream.close();
-            String driverClassNames = properties.getProperty("jdbclogger.proxy.driverClass");
-            String[] split = driverClassNames.split(",");
-            for (String s : split) {
-                String className = findConnectMethodDefineClass(s.trim());
-                if (className == null) {
-                    throw new RuntimeException("can not find connect method in class: " + className);
+            Enumeration<URL> resources = contextClassLoader.getResources("jdbclogger.properties");
+
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                InputStream inputStream = url.openStream();
+                Properties properties = new Properties();
+                properties.load(inputStream);
+                inputStream.close();
+                String driverClassNames = properties.getProperty("jdbclogger.proxy.driverClass");
+                if (driverClassNames != null && driverClassNames.length() > 0) {
+                    String[] split = driverClassNames.split(",");
+                    for (String s : split) {
+                        LogHelper.log("proxy driver: " + s);
+                        String className = findConnectMethodDefineClass(s.trim());
+                        if (className == null) {
+                            throw new RuntimeException("can not find connect method in class: " + className);
+                        }
+                        proxyDriverClassNames.add(className);
+                    }
                 }
-                LogHelper.log("find connect method in class: " + className);
-                proxyDriverClassNames.add(className);
+                String packagePrefixs = properties.getProperty("jdbclogger.project.packagePrefixs");
+                if (packagePrefixs != null && packagePrefixs.length() > 0) {
+                    String[] split = packagePrefixs.split(",");
+                    for (String s : split) {
+                        s = s.trim();
+                        LogHelper.log("add packagePrefix: " + s);
+                        stackTraceManager.getPackagePrefixs().add(s);
+                    }
+                }
+                String packageExecludes = properties.getProperty("jdbclogger.project.packageExecludes");
+                if (packageExecludes != null && packageExecludes.length() > 0) {
+                    String[] split = packageExecludes.split(",");
+                    for (String s : split) {
+                        s = s.trim();
+                        LogHelper.log("add packageExecludes: " + s);
+                        stackTraceManager.getPackageExecludes().add(s);
+                    }
+                }
             }
         } catch (IOException | NotFoundException e) {
             throw new RuntimeException(e);
