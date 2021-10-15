@@ -43,7 +43,7 @@ shadowJar {
         attributes 'Premain-Class': 'com.github.azbh111.jdbclogger.instrument.Agent'
     }
     classifier = null
-    relocate 'javassist.', 'relocate.javassist'
+    relocate 'javassist', 'relocate.javassist'
 }
 
 //    关闭java8变态的javadoc检查

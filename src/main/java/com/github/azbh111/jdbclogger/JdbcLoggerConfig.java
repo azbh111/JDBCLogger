@@ -24,7 +24,7 @@ public class JdbcLoggerConfig {
     static {
         try {
 //            排除自己
-            stackTraceManager.getPackageExecludes().add("com.github.azbh111.");
+            stackTraceManager.getPackageExecludes().add(JdbcLoggerConfig.class.getPackage().getName() + ".");
 
             ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             Enumeration<URL> resources = contextClassLoader.getResources("jdbclogger.properties");
