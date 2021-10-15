@@ -64,7 +64,7 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
     // Batch
     @Override
     public void addBatch() throws SQLException {
-        QueryWrapper query = new QueryWrapper(getSQL().query);
+        QueryWrapper query = getSQL().copyNew();
         queries.add(query);
         index++;
         pstmt.addBatch();

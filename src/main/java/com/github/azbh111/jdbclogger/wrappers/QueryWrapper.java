@@ -16,15 +16,25 @@ import java.util.Calendar;
  * @author Hooman Kamran
  */
 public class QueryWrapper {
-    public String vars[];
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public String vars[];
     public String query;
+
+    public QueryWrapper(String[] vars, String query) {
+        this.vars = vars;
+        this.query = query;
+    }
 
     public QueryWrapper(String query) {
         int countVars = countMatches(query, "?");
         vars = new String[countVars];
         this.query = query.replaceAll("\\?", "%s");
         this.query = this.query.toUpperCase();
+    }
+
+    public QueryWrapper copyNew() {
+        String[] vars = new String[this.vars.length];
+        return new QueryWrapper(vars, query);
     }
 
     public void clearParameters() {
