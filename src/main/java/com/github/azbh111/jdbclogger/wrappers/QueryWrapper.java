@@ -9,6 +9,8 @@ import java.net.URL;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * This class represents a SQL that is going to be executed by a JDBC Statement.
@@ -239,5 +241,16 @@ public class QueryWrapper {
         } else {
             return 0;
         }
+    }
+
+    public static String toString(List<QueryWrapper> queryWrappers) {
+        if (queryWrappers.isEmpty()) {
+            return "";
+        }
+        StringJoiner sj = new StringJoiner(";");
+        for (QueryWrapper queryWrapper : queryWrappers) {
+            sj.add(queryWrapper.toString());
+        }
+        return sj.toString();
     }
 }

@@ -28,7 +28,7 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
         long stop = System.currentTimeMillis();
         long duration = stop - start;
 
-        LogHelper.sqllog(String.format("cost %s, %s", duration, queries));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, QueryWrapper.toString(queries)));
         
         return result;
     }
@@ -42,7 +42,7 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, queries));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, QueryWrapper.toString(queries)));
 
         return result;
     }
@@ -56,7 +56,7 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, queries));
+        LogHelper.sqllog(String.format("cost %s, %s", duration, QueryWrapper.toString(queries)));
 
         return result;
     }
