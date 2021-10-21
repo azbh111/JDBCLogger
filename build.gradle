@@ -22,14 +22,14 @@ apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 group 'com.github.azbh111'
 version = '0.0.1'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-//apply from: "deploy_nexus.gradle"
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
@@ -46,7 +46,7 @@ shadowJar {
     relocate 'javassist', 'relocate.javassist'
 }
 
-//    关闭java8变态的javadoc检查
+//    关闭java8严格的javadoc检查
 if (JavaVersion.current().isJava8Compatible()) {
     tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:none', '-quiet')
@@ -62,6 +62,7 @@ tasks.withType(Javadoc) {
     options.encoding = "UTF-8"
 }
 
+// 让idea下载源码
 idea {
     module {
         downloadJavadoc = true
@@ -88,6 +89,7 @@ compileJava {
     options.compilerArgs << "-Amapstruct.suppressGeneratorVersionInfoComment=true"
     // mapstruct未映射的字段,不警告
     options.compilerArgs << "-Amapstruct.unmappedTargetPolicy=IGNORE"
+    // 构建之前先删除自动生成的类
     doFirst {
         file("$projectDir/src/main/generated").deleteDir();
         file("$projectDir/src/main/generated").mkdirs();
@@ -102,14 +104,99 @@ sourceSets {
     }
 }
 
-clean.doFirst {
-    file("$projectDir/out").deleteDir();
-    file("$projectDir/build").deleteDir();
-    file("$projectDir/src/main/generated").deleteDir();
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+javadoc {
+    // <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    // 防止本地打开中文乱码
+    options.addStringOption("charset", "UTF-8")
+}
+
+configurations {
+    deployerJars
+}
+
+
+// 最主要的是这里
+publishing {
+    publications {
+
+        // 这一个推送项目名称，mavenJava 相当于是一个 task name
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+
+            pom {
+                name = project.group + ":" + project.name
+                if (project.description == null || project.description.isEmpty()) {
+                    description = project.group + ":" + project.name
+                } else {
+                    description = project.description
+                }
+                url = "https://github.com/azbh111/JDBCLogger.git"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "azbh111"
+                        name = "pan"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/azbh111/JDBCLogger.git"
+                    developerConnection = "scm:git:https://github.com/azbh111/JDBCLogger.git"
+                    url = "https://github.com/azbh111/JDBCLogger"
+                }
+            }
+        }
+
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.name
+            version project.version
+            from components.java
+            artifact tasks.sourcesJar
+            artifact tasks.javadocJar
+        }
+    }
+    repositories {
+        maven {
+            name 'mavenCenter'
+            def url_ = null
+            if (project.version.endsWith("-SNAPSHOT")) {
+                url_ = 'https://oss.sonatype.org/content/repositories/snapshots/'
+            } else {
+                url_ = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            }
+            credentials {
+                username = sonatypeUsername
+                password = sonatypePassword
+            }
+            url url_
+        }
+    }
+}
+
+// 签名
+signing {
+    sign publishing.publications.mavenJava
+    sign publishing.publications.shadow
+}
+
+// 自动close/release
 nexusStaging {
-    packageGroup = "com.github.azbh111"
+    packageGroup = project.group
     username = sonatypeUsername
     password = sonatypePassword
 }
