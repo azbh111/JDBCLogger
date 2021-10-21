@@ -55,12 +55,9 @@ https://repo1.maven.org/maven2/com/github/azbh111/JDBCLogger/0.0.2/JDBCLogger-0.
 
   -Xbootclasspath/p:jar绝对路径 -javaagent:jar绝对路径
 
-3.1 将 System.out 重定向到slf4j 
+3.1 将 System.out 重定向到日志框架, 比如slf4j 
 
-```
-  将 System.out 重定向到slf4j
-  https://blog.csdn.net/qq_31683775/article/details/104940649 
-```
+参考 https://blog.csdn.net/qq_31683775/article/details/104940649
 
 3.2 或者 自定义日志输出逻辑
 ```java
