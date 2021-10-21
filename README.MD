@@ -48,12 +48,12 @@ public class CustomerService {
 并读取堆栈信息, 分析出执行sql的位置
 
 ## 用法
-1. 从maven中央仓库中下载jar
+1. 从maven中央仓库中下载JDBCLogger.jar
 https://repo1.maven.org/maven2/com/github/azbh111/JDBCLogger/0.0.2/JDBCLogger-0.0.2.jar
 
 2. 添加java启动参数
 
-  -Xbootclasspath/p:jar绝对路径 -javaagent:jar绝对路径
+  -Xbootclasspath/p:JDBCLogger.jar的绝对路径 -javaagent:JDBCLogger.jar的绝对路径
 
 3.1 将 System.out 重定向到日志框架, 比如slf4j 
 
