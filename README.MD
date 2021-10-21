@@ -68,4 +68,14 @@ public class Main {
 }
 ```
     
+3. 配置文件 jdbclogger.properties 放在classPath下
+```properties
+# 要代理的jdbc驱动类, 多个用逗号分隔
+jdbclogger.proxy.driverClass=
+# 项目包路径前缀, 多个用逗号分隔
+jdbclogger.project.packagePrefixs=
+# 非项目包路径前缀, 多个用逗号分隔
+jdbclogger.project.packageExecludes=
+```
+
   

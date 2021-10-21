@@ -22,12 +22,14 @@ public class JdbcLoggerConfig {
     private static StackTraceManager stackTraceManager = StackTraceManager.getInstance();
 
     static {
-        try {
 //            排除自己
-            stackTraceManager.getPackageExecludes().add(JdbcLoggerConfig.class.getPackage().getName() + ".");
+        stackTraceManager.getPackageExecludes().add(JdbcLoggerConfig.class.getPackage().getName() + ".");
+    }
 
-            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-            Enumeration<URL> resources = contextClassLoader.getResources("jdbclogger.properties");
+    public static void loadConfig(ClassLoader classLoader) {
+        try {
+            LogHelper.log("loadConfig frmo classLoader: " + classLoader.getClass().getName());
+            Enumeration<URL> resources = classLoader.getResources("jdbclogger.properties");
 
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
@@ -67,7 +69,8 @@ public class JdbcLoggerConfig {
                 }
             }
         } catch (IOException | NotFoundException e) {
-            throw new RuntimeException(e);
+            LogHelper.log("加载配额制失败. " + e.getMessage());
+            e.printStackTrace(System.out);
         }
     }
 

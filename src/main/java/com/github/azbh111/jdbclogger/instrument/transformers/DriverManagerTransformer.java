@@ -11,6 +11,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.Properties;
+import java.util.WeakHashMap;
 
 /**
  * This class is responsible to modify the DriverManager to spawn our own Connection class.
@@ -18,7 +19,8 @@ import java.util.Properties;
  * @author HK
  */
 public class DriverManagerTransformer implements ClassFileTransformer {
-
+    private WeakHashMap cache = new WeakHashMap();
+    private Object NULL = new Object();
 
     public DriverManagerTransformer() {
     }
@@ -28,7 +30,7 @@ public class DriverManagerTransformer implements ClassFileTransformer {
                             byte[] classfileBuffer) throws IllegalClassFormatException {
 
         String className = rawclassName.replaceAll("/", ".");
-
+        loadConfigFromClassPath(); // 如果有新的ClassLoder, 就尝试加载配置
         if (JdbcLoggerConfig.sholdProxy(className)) {
             try {
                 LogHelper.log("Instrumenting " + className);
@@ -47,6 +49,20 @@ public class DriverManagerTransformer implements ClassFileTransformer {
             }
         }
         return classfileBuffer;
+    }
+
+    private void loadConfigFromClassPath() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            return;
+        }
+        if (!cache.containsKey(classLoader)) {
+            cache.put(classLoader, NULL);
+            if (!"sun.misc.Launcher$AppClassLoader".equals(classLoader.getClass().getName())) {
+                ClassPool.getDefault().appendClassPath(new LoaderClassPath(classLoader));
+            }
+            JdbcLoggerConfig.loadConfig(classLoader);
+        }
     }
 
     private void connect(ClassPool cp, CtClass curClass) throws NotFoundException, CannotCompileException {
