@@ -2,10 +2,10 @@ package com.github.azbh111.jdbclogger.instrument.transformers;
 
 import com.github.azbh111.jdbclogger.JdbcLoggerConfig;
 import com.github.azbh111.jdbclogger.LogHelper;
-import com.github.azbh111.jdbclogger.instrument.Agent;
 import com.github.azbh111.jdbclogger.wrappers.ConnectionWrapper;
 import javassist.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -23,6 +23,7 @@ public class DriverManagerTransformer implements ClassFileTransformer {
     private Object NULL = new Object();
 
     public DriverManagerTransformer() {
+        importPackage();
     }
 
     @Override
@@ -32,23 +33,28 @@ public class DriverManagerTransformer implements ClassFileTransformer {
         String className = rawclassName.replaceAll("/", ".");
         loadConfigFromClassPath(); // 如果有新的ClassLoder, 就尝试加载配置
         if (JdbcLoggerConfig.sholdProxy(className)) {
-            try {
-                LogHelper.log("Instrumenting " + className);
-                ClassPool cp = ClassPool.getDefault();
-
-                cp.importPackage("sun.reflect");
-
-                CtClass curClass = cp.get(className);
-
-                connect(cp, curClass);
-
-                Agent.running();
-                return curClass.toBytecode();
-            } catch (NotFoundException | CannotCompileException | IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            return doTransform(className, classfileBuffer);
         }
         return classfileBuffer;
+    }
+
+    private void importPackage() {
+        ClassPool cp = ClassPool.getDefault();
+        cp.importPackage("sun.reflect");
+    }
+
+    private byte[] doTransform(String className, byte[] classfileBuffer) {
+        try {
+            LogHelper.log("Instrumenting " + className);
+            ClassPool cp = ClassPool.getDefault();
+
+            CtClass curClass = cp.makeClass(new ByteArrayInputStream(classfileBuffer));
+
+            proxyConnectMethod(cp, curClass);
+            return curClass.toBytecode();
+        } catch (NotFoundException | CannotCompileException | IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private void loadConfigFromClassPath() {
@@ -65,7 +71,7 @@ public class DriverManagerTransformer implements ClassFileTransformer {
         }
     }
 
-    private void connect(ClassPool cp, CtClass curClass) throws NotFoundException, CannotCompileException {
+    private void proxyConnectMethod(ClassPool cp, CtClass curClass) throws NotFoundException, CannotCompileException {
         String methodName = "connect";
         CtClass paramClass1 = cp.get(String.class.getCanonicalName());
         CtClass paramClass2 = cp.get(Properties.class.getCanonicalName());

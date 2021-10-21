@@ -21,9 +21,5 @@ public class Agent {
         LogHelper.log("JDBCLogger is starting up!");
     }
 
-    public static void running() {
-        LogHelper.log("JDBCLogger is starting running!");
-    }
-
 
 }
