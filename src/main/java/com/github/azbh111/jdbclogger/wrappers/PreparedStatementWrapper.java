@@ -29,7 +29,7 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
         long duration = stop - start;
 
         LogHelper.sqllog(String.format("cost %s, %s", duration, QueryWrapper.toString(queries)));
-        
+
         return result;
     }
 

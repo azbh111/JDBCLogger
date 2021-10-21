@@ -42,7 +42,6 @@ public class QueryWrapper {
     public void clearParameters() {
         int countVars = countMatches(query, "?");
         vars = new String[countVars];
-
     }
 
 
@@ -73,7 +72,6 @@ public class QueryWrapper {
 
     public void setBoolean(int i, boolean x) {
         vars[i - 1] = new Boolean(x).toString();
-
     }
 
     public void setByte(int i, byte x) {
@@ -82,27 +80,22 @@ public class QueryWrapper {
 
     public void setShort(int i, short x) {
         vars[i - 1] = new Short(x).toString();
-
     }
 
     public void setInt(int i, int x) {
         vars[i - 1] = new Integer(x).toString();
-
     }
 
     public void setLong(int i, long x) {
         vars[i - 1] = new Long(x).toString();
-
     }
 
     public void setFloat(int i, float x) {
         vars[i - 1] = new Float(x).toString();
-
     }
 
     public void setBigDecimal(int i, BigDecimal x) {
         vars[i - 1] = x.toString();
-
     }
 
     public void setBytes(int i, byte[] x) {
@@ -111,7 +104,6 @@ public class QueryWrapper {
         } catch (UnsupportedEncodingException e) {
             vars[i - 1] = "byte array";
         }
-
     }
 
     private String toHex(String arg) {
@@ -124,7 +116,6 @@ public class QueryWrapper {
 
     public void setTime(int i, Time x) {
         vars[i - 1] = formatter.format(x);
-
     }
 
     public void setAsciiStream(int i, InputStream x, int length) {
@@ -133,17 +124,14 @@ public class QueryWrapper {
 
     public void setTimestamp(int i, Timestamp x) {
         vars[i - 1] = formatter.format(x);
-
     }
 
     public void setUnicodeStream(int i, InputStream x, int length) {
         vars[i - 1] = "[input stream]";
-
     }
 
     public void setBinaryStream(int i, InputStream x, int length) {
         vars[i - 1] = "[input stream]";
-
     }
 
     public void setObject(int i, Object x, int targetSqlType) {
@@ -152,17 +140,14 @@ public class QueryWrapper {
 
     public void setObject(int i, Object x) {
         vars[i - 1] = x.toString();
-
     }
 
     public void setCharacterStream(int i, Reader reader, int length) {
         vars[i - 1] = "[reader]";
-
     }
 
     public void setRef(int i, Ref x) {
         vars[i - 1] = "[ref]";
-
     }
 
     public void setBlob(int i, Blob x) {
