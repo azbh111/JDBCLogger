@@ -48,19 +48,21 @@ public class CustomerService {
 并读取堆栈信息, 分析出执行sql的位置
 
 ## 用法
+1. 从maven中央仓库中下载jar
+https://repo1.maven.org/maven2/com/github/azbh111/JDBCLogger/0.0.2/JDBCLogger-0.0.2.jar
 
-1. 添加java启动参数
+2. 添加java启动参数
 
   -Xbootclasspath/p:jar绝对路径 -javaagent:jar绝对路径
 
-2.1 将 System.out 重定向到slf4j 或者 自定义日志输出逻辑
+3.1 将 System.out 重定向到slf4j 
 
 ```
   将 System.out 重定向到slf4j
   https://blog.csdn.net/qq_31683775/article/details/104940649 
 ```
 
-或者
+3.2 或者 自定义日志输出逻辑
 ```java
 public class Main {
     private static final Logger logger = Logger.getLogger("sql");
@@ -72,7 +74,7 @@ public class Main {
 }
 ```
 
-3. 配置文件 jdbclogger.properties 放在classPath下
+4. 配置文件 jdbclogger.properties 放在classPath下
 ```properties
 # 修改成自己项目的配置
 # 要代理的jdbc驱动类, 多个用逗号分隔
