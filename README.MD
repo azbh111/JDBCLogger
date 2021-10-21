@@ -16,9 +16,11 @@ public class CustomerService {
 }
 ```
 
-执行耗时49秒, 对应的日志
+执行耗时49毫秒, 对应的日志
 ```
-2021-09-18 15:48:51.344 LogHelper.log:19 - CustomerService:getCustomerById:selectById:103 cost 49 [select * from customer where id = 3]
+2021-09-18 15:48:51.344 LogHelper.log:19 - CustomerService:getCustomerById:selectById:103 cost 49 select `id`, `name`, `sex`, `age` from customer where id = 3
+2021-09-18 15:48:51.344 LogHelper.log:19 - CustomerService:getCustomerById:selectById:103 cost 49 select `id`, `name`, `sex`, `age` from customer where id = 3
+2021-09-18 15:48:51.344 LogHelper.log:19 - CustomerService:getCustomerById:selectById:103 cost 49 select `id`, `name`, `sex`, `age` from customer where id = 3
 ```
 
 ## 特性
@@ -33,11 +35,11 @@ public class CustomerService {
 
 支持mybatis/hibernate等所有orm框架
 
-接入时项目修改小
+对业务无侵入
 
 ## 原理
 
-通过javaagent来修改指定的jdbc驱动, 修改其中的connect方法, 返回代理后的 ConnectionWrapper
+通过javaagent来代理指定的jdbc驱动, 增强connect方法
 
 从而可以干预 connection.createStatement/connection.prepareStatement 流程
 
@@ -57,25 +59,28 @@ public class CustomerService {
   将 System.out 重定向到slf4j
   https://blog.csdn.net/qq_31683775/article/details/104940649 
 ```
+
 或者
 ```java
 public class Main {
-    private static Logger logger = LoggerFactory.getLogger("sql");
+    private static final Logger logger = Logger.getLogger("sql");
+
     public static void main(String[] args) {
-        // 自定义日志输出逻辑
-        LogHelper.setLogger(logger);
+//        自定义日志输出逻辑
+        LogHelper.setLogger(str -> logger.info(str));
     }
 }
 ```
-    
+
 3. 配置文件 jdbclogger.properties 放在classPath下
 ```properties
+# 修改成自己项目的配置
 # 要代理的jdbc驱动类, 多个用逗号分隔
-jdbclogger.proxy.driverClass=
+jdbclogger.proxy.driverClass=com.mysql.cj.jdbc.Driver
 # 项目包路径前缀, 多个用逗号分隔
-jdbclogger.project.packagePrefixs=
-# 非项目包路径前缀, 多个用逗号分隔
-jdbclogger.project.packageExecludes=
+jdbclogger.project.packagePrefixs=com.github.azbh111
+# 非项目包路径前缀, 多个用逗号分隔, 用来排除 jdbclogger.project.packagePrefixs 中的某些包路径 
+jdbclogger.project.packageExecludes=com.github.azbh111.common
 ```
 
   

@@ -28,7 +28,7 @@ public class JdbcLoggerConfig {
 
     public static void loadConfig(ClassLoader classLoader) {
         try {
-            LogHelper.log("loadConfig frmo classLoader: " + classLoader.getClass().getName());
+            LogHelper.log("loadConfig from classLoader: " + classLoader.getClass().getName());
             Enumeration<URL> resources = classLoader.getResources("jdbclogger.properties");
 
             while (resources.hasMoreElements()) {
