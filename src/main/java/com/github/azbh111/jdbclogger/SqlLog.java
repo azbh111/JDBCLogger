@@ -7,11 +7,11 @@ import com.github.azbh111.jdbclogger.stacktrace.model.StackTraceInfo;
  * @author: zyp
  * @since: 2021/9/18 13:11
  */
-public class LogHelper {
+public class SqlLog {
     private static Logger logger = (str) -> System.out.println(str);
 
     public static void setLogger(Logger logger) {
-        LogHelper.logger = logger;
+        SqlLog.logger = logger;
     }
 
     public static void sqllog(String str) {

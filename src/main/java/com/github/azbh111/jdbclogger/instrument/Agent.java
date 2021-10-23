@@ -1,6 +1,6 @@
 package com.github.azbh111.jdbclogger.instrument;
 
-import com.github.azbh111.jdbclogger.LogHelper;
+import com.github.azbh111.jdbclogger.SqlLog;
 import com.github.azbh111.jdbclogger.instrument.transformers.DriverManagerTransformer;
 
 import java.lang.instrument.Instrumentation;
@@ -18,7 +18,7 @@ public class Agent {
     }
 
     public static void starting() {
-        LogHelper.log("JDBCLogger is starting up!");
+        SqlLog.log("JDBCLogger is starting up!");
     }
 
 

@@ -1,7 +1,7 @@
 package com.github.azbh111.jdbclogger.instrument.transformers;
 
 import com.github.azbh111.jdbclogger.JdbcLoggerConfig;
-import com.github.azbh111.jdbclogger.LogHelper;
+import com.github.azbh111.jdbclogger.SqlLog;
 import com.github.azbh111.jdbclogger.wrappers.ConnectionWrapper;
 import javassist.*;
 
@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.WeakHashMap;
 
@@ -45,7 +46,7 @@ public class DriverManagerTransformer implements ClassFileTransformer {
 
     private byte[] doTransform(String className, byte[] classfileBuffer) {
         try {
-            LogHelper.log("Instrumenting " + className);
+            SqlLog.log("Instrumenting " + className);
             ClassPool cp = ClassPool.getDefault();
 
             CtClass curClass = cp.makeClass(new ByteArrayInputStream(classfileBuffer));
@@ -76,18 +77,39 @@ public class DriverManagerTransformer implements ClassFileTransformer {
         CtClass paramClass1 = cp.get(String.class.getCanonicalName());
         CtClass paramClass2 = cp.get(Properties.class.getCanonicalName());
         CtClass[] paramArgs = new CtClass[]{paramClass1, paramClass2};
-
-        CtMethod originMethod = curClass.getDeclaredMethod(methodName, paramArgs);
+//        搜索目标方法, 可能在父类里面
+        CtMethod originMethod = findConnectMethod(curClass, methodName, paramArgs);
+        if (originMethod == null) {
+            throw new NotFoundException(String.format("can not find method( %s(%s, %s) ) in class: %s", methodName, paramClass1.getName(), paramClass2.getName(), curClass.getName()));
+        }
         // 创建新的方法，复制原来的方法
         CtMethod mnew = CtNewMethod.copy(originMethod, methodName, curClass, null);
-
-//		原方法改名
-        originMethod.setName(methodName + "$Impl");
-
         String wrapperClass = ConnectionWrapper.class.getCanonicalName();
-        mnew.setBody(String.format("{return new %s(%s$Impl($1, $2));}", wrapperClass, methodName));
-
+//        代理方法
+        if (Objects.equals(originMethod.getDeclaringClass().getName(), curClass.getName())) {
+//            方法是在当前类定义的, 直接改名
+            SqlLog.log("proxy connect method in class " + curClass.getName());
+            originMethod.setName(methodName + "$Impl");
+            mnew.setBody(String.format("{return new %s(%s$Impl($1, $2));}", wrapperClass, methodName));
+        } else {
+            SqlLog.log("add connect method to class " + originMethod.getDeclaringClass().getName());
+//            方法是在父类定义的, 当前方法直接调用父类方法
+            mnew.setBody(String.format("{return new %s(super.%s($1, $2));}", wrapperClass, methodName));
+        }
         curClass.addMethod(mnew);
     }
 
+    private CtMethod findConnectMethod(CtClass curClass, String methodName, CtClass[] paramArgs) throws NotFoundException {
+        while (true) {
+            try {
+                return curClass.getDeclaredMethod(methodName, paramArgs);
+            } catch (NotFoundException e) {
+                if (!Object.class.getName().equals(curClass.getName())) {
+                    curClass = curClass.getSuperclass();
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
 }

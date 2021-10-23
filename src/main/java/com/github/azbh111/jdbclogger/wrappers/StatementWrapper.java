@@ -1,7 +1,7 @@
 package com.github.azbh111.jdbclogger.wrappers;
 
 
-import com.github.azbh111.jdbclogger.LogHelper;
+import com.github.azbh111.jdbclogger.SqlLog;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class StatementWrapper implements Statement {
         long stop = System.currentTimeMillis();
         long duration = stop - start;
 
-        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
+        SqlLog.sqllog(String.format("cost %s, %s", duration, sql));
         return result;
 
     }
@@ -74,7 +74,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
+        SqlLog.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -150,7 +150,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
+        SqlLog.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -221,7 +221,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, QueryWrapper.toString(queries)));
+        SqlLog.sqllog(String.format("cost %s, %s", duration, QueryWrapper.toString(queries)));
 
         return result;
     }
@@ -252,7 +252,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
+        SqlLog.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -268,7 +268,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
+        SqlLog.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -284,7 +284,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
+        SqlLog.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -300,7 +300,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
+        SqlLog.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -316,7 +316,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
+        SqlLog.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }
@@ -332,7 +332,7 @@ public class StatementWrapper implements Statement {
 
         long stop = System.currentTimeMillis();
         long duration = stop - start;
-        LogHelper.sqllog(String.format("cost %s, %s", duration, sql));
+        SqlLog.sqllog(String.format("cost %s, %s", duration, sql));
 
         return result;
     }

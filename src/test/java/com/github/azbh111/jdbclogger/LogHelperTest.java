@@ -11,6 +11,6 @@ public class LogHelperTest {
 
     public static void main(String[] args) {
 //        自定义日志输出逻辑
-        LogHelper.setLogger(str -> logger.info(str));
+        SqlLog.setLogger(str -> logger.info(str));
     }
 }

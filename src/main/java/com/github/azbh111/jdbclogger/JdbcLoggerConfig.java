@@ -1,8 +1,6 @@
 package com.github.azbh111.jdbclogger;
 
 import com.github.azbh111.jdbclogger.stacktrace.StackTraceManager;
-import javassist.ClassPool;
-import javassist.CtClass;
 import javassist.NotFoundException;
 
 import java.io.IOException;
@@ -28,7 +26,7 @@ public class JdbcLoggerConfig {
 
     public static void loadConfig(ClassLoader classLoader) {
         try {
-            LogHelper.log("loadConfig from classLoader: " + classLoader.getClass().getName());
+            SqlLog.log("loadConfig from classLoader: " + classLoader.getClass().getName());
             Enumeration<URL> resources = classLoader.getResources("jdbclogger.properties");
             while (resources.hasMoreElements()) {
                 Properties properties = loadProperties(resources.nextElement());
@@ -37,7 +35,7 @@ public class JdbcLoggerConfig {
                 readPackageExecludes(properties);
             }
         } catch (IOException | NotFoundException e) {
-            LogHelper.log("加载配额制失败. " + e.getMessage());
+            SqlLog.log("加载配额制失败. " + e.getMessage());
             e.printStackTrace(System.out);
         }
     }
@@ -58,7 +56,7 @@ public class JdbcLoggerConfig {
         String[] split = packageExecludes.split(",");
         for (String s : split) {
             s = s.trim();
-            LogHelper.log("add packageExecludes: " + s);
+            SqlLog.log("add packageExecludes: " + s);
             stackTraceManager.getPackageExecludes().add(s);
         }
     }
@@ -71,7 +69,7 @@ public class JdbcLoggerConfig {
         String[] split = packagePrefixs.split(",");
         for (String s : split) {
             s = s.trim();
-            LogHelper.log("add packagePrefix: " + s);
+            SqlLog.log("add packagePrefix: " + s);
             stackTraceManager.getPackagePrefixs().add(s);
         }
     }
@@ -82,37 +80,10 @@ public class JdbcLoggerConfig {
             return;
         }
         String[] split = driverClassNames.split(",");
-        for (String s : split) {
-            String className = findConnectMethodDefineClass(s.trim());
-            LogHelper.log("proxy driver: " + className);
-            if (className == null) {
-                throw new RuntimeException("can not find connect method in class: " + className);
-            }
-            proxyDriverClassNames.add(className);
+        for (String originClassName : split) {
+            SqlLog.log("proxy driver. className=" + originClassName);
+            proxyDriverClassNames.add(originClassName.trim());
         }
-    }
-
-    private static String findConnectMethodDefineClass(String cls) throws NotFoundException {
-        ClassPool cp = ClassPool.getDefault();
-        CtClass ctClass = cp.get(cls);
-
-        String methodName = "connect";
-        CtClass paramClass1 = cp.get(String.class.getCanonicalName());
-        CtClass paramClass2 = cp.get(Properties.class.getCanonicalName());
-        CtClass[] paramArgs = new CtClass[]{paramClass1, paramClass2};
-        while (true) {
-            try {
-                ctClass.getDeclaredMethod(methodName, paramArgs);
-//                找到方法了
-                break;
-            } catch (NotFoundException x) {
-                ctClass = ctClass.getSuperclass();
-                if (ctClass == null) {
-                    return null;
-                }
-            }
-        }
-        return ctClass.getName();
     }
 
     public static boolean sholdProxy(String className) {

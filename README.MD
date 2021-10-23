@@ -18,9 +18,9 @@ public class CustomerService {
 
 执行耗时49毫秒, 对应的日志
 ```
-2021-09-18 15:48:51.344 LogHelper.log:19 - CustomerService:getCustomerById:selectById:103 cost 49 select `id`, `name`, `sex`, `age` from customer where id = 3
-2021-09-18 15:48:51.344 LogHelper.log:19 - CustomerService:getCustomerById:selectById:103 cost 49 select `id`, `name`, `sex`, `age` from customer where id = 3
-2021-09-18 15:48:51.344 LogHelper.log:19 - CustomerService:getCustomerById:selectById:103 cost 49 select `id`, `name`, `sex`, `age` from customer where id = 3
+2021-09-18 15:48:51.344 SqlLog.log:19 - CustomerService:getCustomerById:selectById:103 cost 49 select `id`, `name`, `sex`, `age` from customer where id = 3
+2021-09-18 15:48:51.344 SqlLog.log:19 - CustomerService:getCustomerById:selectById:103 cost 49 select `id`, `name`, `sex`, `age` from customer where id = 3
+2021-09-18 15:48:51.344 SqlLog.log:19 - CustomerService:getCustomerById:selectById:103 cost 49 select `id`, `name`, `sex`, `age` from customer where id = 3
 ```
 
 ## 特性
@@ -60,7 +60,7 @@ public class Main {
 
     public static void main(String[] args) {
 //        自定义日志输出逻辑
-        LogHelper.setLogger(str -> logger.info(str));
+        SqlLog.setLogger(str -> logger.info(str));
     }
 }
 ```
