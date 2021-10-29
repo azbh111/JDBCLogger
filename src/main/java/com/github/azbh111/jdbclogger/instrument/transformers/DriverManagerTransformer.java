@@ -92,7 +92,7 @@ public class DriverManagerTransformer implements ClassFileTransformer {
             originMethod.setName(methodName + "$Impl");
             mnew.setBody(String.format("{return new %s(%s$Impl($1, $2));}", wrapperClass, methodName));
         } else {
-            SqlLog.log("add connect method to class " + originMethod.getDeclaringClass().getName());
+            SqlLog.log("add connect method to class " + curClass.getName());
 //            方法是在父类定义的, 当前方法直接调用父类方法
             mnew.setBody(String.format("{return new %s(super.%s($1, $2));}", wrapperClass, methodName));
         }
