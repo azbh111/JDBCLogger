@@ -2,9 +2,7 @@ package com.github.azbh111.jdbclogger.wrappers;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.URL;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -18,7 +16,7 @@ import java.util.StringJoiner;
  * @author Hooman Kamran
  */
 public class QueryWrapper {
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("'yyyy-MM-dd HH:mm:ss'");
     public String vars[];
     public String query;
 
@@ -44,26 +42,25 @@ public class QueryWrapper {
         vars = new String[countVars];
     }
 
-
-    public void setDouble(int i, Double arg0) {
-        vars[i - 1] = "'" + arg0 + "'";
+    public void setDouble(int i, Double x) {
+        vars[i - 1] = x == null ? "null" : x.toString();
     }
 
-    public void setString(int i, String arg0) {
-        vars[i - 1] = "'" + arg0 + "'";
+    public void setString(int i, String x) {
+        vars[i - 1] = toExecutableString(x);
     }
 
-    public void setObject(int i, String arg0) {
-        vars[i - 1] = arg0;
+    public void setObject(int i, String x) {
+        vars[i - 1] = toExecutableString(x);
     }
 
     public void setNull(int i, int type) {
-        vars[i - 1] = "null (" + type + ")";
+        vars[i - 1] = "null";
     }
 
     public String toString() {
         try {
-            return String.format(query, vars).replaceAll("\n", " ");
+            return String.format(query, this.vars).replaceAll("\n", " ");
         } catch (Exception e) {
             e.printStackTrace();
             return query + " " + vars.length;
@@ -71,51 +68,43 @@ public class QueryWrapper {
     }
 
     public void setBoolean(int i, boolean x) {
-        vars[i - 1] = new Boolean(x).toString();
+        vars[i - 1] = String.valueOf(x);
     }
 
     public void setByte(int i, byte x) {
-        vars[i - 1] = new Byte(x).toString();
+        vars[i - 1] = String.valueOf(x);
     }
 
     public void setShort(int i, short x) {
-        vars[i - 1] = new Short(x).toString();
+        vars[i - 1] = String.valueOf(x);
     }
 
     public void setInt(int i, int x) {
-        vars[i - 1] = new Integer(x).toString();
+        vars[i - 1] = String.valueOf(x);
     }
 
     public void setLong(int i, long x) {
-        vars[i - 1] = new Long(x).toString();
+        vars[i - 1] = String.valueOf(x);
     }
 
     public void setFloat(int i, float x) {
-        vars[i - 1] = new Float(x).toString();
+        vars[i - 1] = String.valueOf(x);
     }
 
     public void setBigDecimal(int i, BigDecimal x) {
-        vars[i - 1] = x.toString();
+        vars[i - 1] = toExecutableString(x);
     }
 
     public void setBytes(int i, byte[] x) {
-        try {
-            vars[i - 1] = toHex(new String(x, "US-ASCII"));
-        } catch (UnsupportedEncodingException e) {
-            vars[i - 1] = "byte array";
-        }
-    }
-
-    private String toHex(String arg) {
-        return String.format("%x", new BigInteger(1, arg.getBytes(/* YOUR_CHARSET? */)));
+        vars[i - 1] = "[bytes]";
     }
 
     public void setDate(int i, Date x) {
-        vars[i - 1] = formatter.format(x);
+        vars[i - 1] = x == null ? "null" : formatter.format(x);
     }
 
     public void setTime(int i, Time x) {
-        vars[i - 1] = formatter.format(x);
+        vars[i - 1] = x == null ? "null" : formatter.format(x);
     }
 
     public void setAsciiStream(int i, InputStream x, int length) {
@@ -123,23 +112,23 @@ public class QueryWrapper {
     }
 
     public void setTimestamp(int i, Timestamp x) {
-        vars[i - 1] = formatter.format(x);
+        vars[i - 1] = x == null ? "null" : formatter.format(x);
     }
 
     public void setUnicodeStream(int i, InputStream x, int length) {
-        vars[i - 1] = "[input stream]";
+        vars[i - 1] = "[inputStream]";
     }
 
     public void setBinaryStream(int i, InputStream x, int length) {
-        vars[i - 1] = "[input stream]";
+        vars[i - 1] = "[inputStream]";
     }
 
     public void setObject(int i, Object x, int targetSqlType) {
-        vars[i - 1] = x.toString();
+        vars[i - 1] = toExecutableString(x);
     }
 
     public void setObject(int i, Object x) {
-        vars[i - 1] = x.toString();
+        vars[i - 1] = toExecutableString(x);
     }
 
     public void setCharacterStream(int i, Reader reader, int length) {
@@ -154,7 +143,6 @@ public class QueryWrapper {
         vars[i - 1] = "[Blob]";
     }
 
-
     public void setClob(int i, Clob x) {
         vars[i - 1] = "[clob]";
     }
@@ -164,15 +152,15 @@ public class QueryWrapper {
     }
 
     public void setDate(int i, Date x, Calendar cal) {
-        vars[i - 1] = String.valueOf(x.getTime());
+        vars[i - 1] = x == null ? "null" : formatter.format(x);
     }
 
     public void setTime(int i, Time x, Calendar cal) {
-        vars[i - 1] = String.valueOf(x.getTime());
+        vars[i - 1] = x == null ? "null" : formatter.format(x);
     }
 
     public void setTimestamp(int i, Timestamp x, Calendar cal) {
-        vars[i - 1] = String.valueOf(x.getTime());
+        vars[i - 1] = x == null ? "null" : formatter.format(x);
     }
 
     public void setNull(int i, int sqlType, String typeName) {
@@ -180,19 +168,19 @@ public class QueryWrapper {
     }
 
     public void setURL(int i, URL x) {
-        vars[i - 1] = x.toString();
+        vars[i - 1] = toExecutableString(x);
     }
 
     public void setRowId(int i, RowId x) {
-        vars[i - 1] = x.toString();
+        vars[i - 1] = "[rowId]";
     }
 
-    public void setNString(int i, String value) {
-        vars[i - 1] = value;
+    public void setNString(int i, String x) {
+        vars[i - 1] = toExecutableString(x);
     }
 
     public void setNCharacterStream(int i, Reader value, long length) {
-        vars[i - 1] = "[character stream]";
+        vars[i - 1] = "[characterStream]";
     }
 
     public void setNClob(int i, NClob value) {
@@ -212,7 +200,7 @@ public class QueryWrapper {
     }
 
     public void setSQLXML(int i, SQLXML xmlObject) {
-        vars[i - 1] = xmlObject.toString();
+        vars[i - 1] = "[sqlxml]";
     }
 
     private int countMatches(String str, String sub) {
@@ -237,5 +225,12 @@ public class QueryWrapper {
             sj.add(queryWrapper.toString());
         }
         return sj.toString();
+    }
+
+    private String toExecutableString(Object x) {
+        if (x == null) {
+            return "null";
+        }
+        return "'" + x + "'";
     }
 }
