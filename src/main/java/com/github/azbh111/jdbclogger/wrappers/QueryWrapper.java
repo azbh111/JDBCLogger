@@ -1,7 +1,11 @@
 package com.github.azbh111.jdbclogger.wrappers;
 
+import com.github.azbh111.jdbclogger.SqlLog;
+
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
@@ -38,19 +42,10 @@ public class QueryWrapper {
     }
 
     public void clearParameters() {
-        int countVars = countMatches(query, "?");
-        vars = new String[countVars];
-    }
-
-    public void setDouble(int i, Double x) {
-        vars[i - 1] = x == null ? "null" : x.toString();
+        vars = new String[vars.length];
     }
 
     public void setString(int i, String x) {
-        vars[i - 1] = toExecutableString(x);
-    }
-
-    public void setObject(int i, String x) {
         vars[i - 1] = toExecutableString(x);
     }
 
@@ -58,17 +53,20 @@ public class QueryWrapper {
         vars[i - 1] = "null";
     }
 
+    @Override
     public String toString() {
         try {
             return String.format(query, this.vars).replaceAll("\n", " ");
         } catch (Exception e) {
-            e.printStackTrace();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            SqlLog.log("convert QueryWrapper to String fail.\n" + sw.toString());
             return query + " " + vars.length;
         }
     }
 
     public void setBoolean(int i, boolean x) {
-        vars[i - 1] = String.valueOf(x);
+        vars[i - 1] = x ? "1" : "0";
     }
 
     public void setByte(int i, byte x) {
@@ -91,6 +89,10 @@ public class QueryWrapper {
         vars[i - 1] = String.valueOf(x);
     }
 
+    public void setDouble(int i, double x) {
+        vars[i - 1] = String.valueOf(x);
+    }
+
     public void setBigDecimal(int i, BigDecimal x) {
         vars[i - 1] = toExecutableString(x);
     }
@@ -107,7 +109,12 @@ public class QueryWrapper {
         vars[i - 1] = x == null ? "null" : formatter.format(x);
     }
 
-    public void setAsciiStream(int i, InputStream x, int length) {
+
+    public void setAsciiStream(int i, InputStream x, long length) {
+        vars[i - 1] = "[input stream]";
+    }
+
+    public void setAsciiStream(int i, InputStream x) {
         vars[i - 1] = "[input stream]";
     }
 
@@ -119,7 +126,11 @@ public class QueryWrapper {
         vars[i - 1] = "[inputStream]";
     }
 
-    public void setBinaryStream(int i, InputStream x, int length) {
+    public void setBinaryStream(int i, InputStream x, long length) {
+        vars[i - 1] = "[inputStream]";
+    }
+
+    public void setBinaryStream(int i, InputStream x) {
         vars[i - 1] = "[inputStream]";
     }
 
@@ -131,7 +142,11 @@ public class QueryWrapper {
         vars[i - 1] = toExecutableString(x);
     }
 
-    public void setCharacterStream(int i, Reader reader, int length) {
+    public void setCharacterStream(int i, Reader reader, long length) {
+        vars[i - 1] = "[reader]";
+    }
+
+    public void setCharacterStream(int i, Reader reader) {
         vars[i - 1] = "[reader]";
     }
 
@@ -141,6 +156,14 @@ public class QueryWrapper {
 
     public void setBlob(int i, Blob x) {
         vars[i - 1] = "[Blob]";
+    }
+
+    public void setBlob(int i, InputStream x) {
+        vars[i - 1] = "[Blob]";
+    }
+
+    public void setClob(int i, Reader x) {
+        vars[i - 1] = "[clob]";
     }
 
     public void setClob(int i, Clob x) {
@@ -183,7 +206,15 @@ public class QueryWrapper {
         vars[i - 1] = "[characterStream]";
     }
 
+    public void setNCharacterStream(int i, Reader value) {
+        vars[i - 1] = "[characterStream]";
+    }
+
     public void setNClob(int i, NClob value) {
+        vars[i - 1] = "[nclob]";
+    }
+
+    public void setNClob(int i, Reader value) {
         vars[i - 1] = "[nclob]";
     }
 

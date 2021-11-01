@@ -26,7 +26,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group 'com.github.azbh111'
-version = '0.0.6'
+version = '0.0.7'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -40,6 +40,7 @@ shadowJar {
         attributes 'Premain-Class': 'com.github.azbh111.jdbclogger.instrument.Agent'
     }
     classifier = null
+//    改javassist的包路径,防止冲突
     relocate 'javassist', 'relocate.javassist'
 }
 

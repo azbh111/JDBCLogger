@@ -21,44 +21,17 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        long start = System.currentTimeMillis();
-
-        ResultSet result = this.pstmt.executeQuery();
-
-        long stop = System.currentTimeMillis();
-        long duration = stop - start;
-
-        SqlLog.sqllog(String.format("cost %s, %s", duration, QueryWrapper.toString(queries)));
-
-        return result;
+        return SqlLog.wrapExecute(queries, () -> this.pstmt.executeQuery());
     }
 
     @Override
     public int executeUpdate() throws SQLException {
-
-        long start = System.currentTimeMillis();
-
-        Integer result = this.pstmt.executeUpdate();
-
-        long stop = System.currentTimeMillis();
-        long duration = stop - start;
-        SqlLog.sqllog(String.format("cost %s, %s", duration, QueryWrapper.toString(queries)));
-
-        return result;
+        return SqlLog.wrapExecute(queries, () -> this.pstmt.executeUpdate());
     }
 
     @Override
     public boolean execute() throws SQLException {
-
-        long start = System.currentTimeMillis();
-
-        Boolean result = this.pstmt.execute();
-
-        long stop = System.currentTimeMillis();
-        long duration = stop - start;
-        SqlLog.sqllog(String.format("cost %s, %s", duration, QueryWrapper.toString(queries)));
-
-        return result;
+        return SqlLog.wrapExecute(queries, () -> this.pstmt.execute());
     }
 
     // Batch
@@ -72,7 +45,7 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
 
     @Override
     public void clearParameters() throws SQLException {
-        queries = new ArrayList<QueryWrapper>();
+        getSQL().clearParameters();
         pstmt.clearParameters();
     }
 
@@ -136,7 +109,6 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
     public void setString(int parameterIndex, String x) throws SQLException {
         getSQL().setString(parameterIndex, x);
         pstmt.setString(parameterIndex, x);
-
     }
 
     @Override
@@ -161,14 +133,12 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
     public void setTimestamp(int parameterIndex, Timestamp x) throws SQLException {
         getSQL().setTimestamp(parameterIndex, x);
         pstmt.setTimestamp(parameterIndex, x);
-
     }
 
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x, int length) throws SQLException {
         getSQL().setAsciiStream(parameterIndex, x, length);
         pstmt.setAsciiStream(parameterIndex, x, length);
-
     }
 
     @SuppressWarnings("deprecation")
@@ -327,64 +297,74 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
     public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException {
         getSQL().setSQLXML(parameterIndex, xmlObject);
         pstmt.setSQLXML(parameterIndex, xmlObject);
-
     }
 
     @Override
     public void setObject(int parameterIndex, Object x, int targetSqlType, int scaleOrLength) throws SQLException {
+        getSQL().setObject(parameterIndex, x);
         pstmt.setObject(parameterIndex, x, targetSqlType, scaleOrLength);
 
     }
 
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException {
+        getSQL().setAsciiStream(parameterIndex, x, length);
         pstmt.setAsciiStream(parameterIndex, x, length);
     }
 
     @Override
     public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException {
+        getSQL().setBinaryStream(parameterIndex, x, length);
         pstmt.setBinaryStream(parameterIndex, x, length);
 
     }
 
     @Override
-    public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException {
-        pstmt.setCharacterStream(parameterIndex, reader, length);
+    public void setCharacterStream(int parameterIndex, Reader x, long length) throws SQLException {
+        getSQL().setCharacterStream(parameterIndex, x, length);
+        pstmt.setCharacterStream(parameterIndex, x, length);
     }
 
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException {
+        getSQL().setAsciiStream(parameterIndex, x);
         pstmt.setAsciiStream(parameterIndex, x);
     }
 
     @Override
     public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException {
-        pstmt.setAsciiStream(parameterIndex, x);
+        getSQL().setBinaryStream(parameterIndex, x);
+        pstmt.setBinaryStream(parameterIndex, x);
     }
 
     @Override
-    public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException {
-        pstmt.setCharacterStream(parameterIndex, reader);
+    public void setCharacterStream(int parameterIndex, Reader x) throws SQLException {
+        getSQL().setCharacterStream(parameterIndex, x);
+        pstmt.setCharacterStream(parameterIndex, x);
     }
 
     @Override
-    public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException {
-        pstmt.setNCharacterStream(parameterIndex, value);
+    public void setNCharacterStream(int parameterIndex, Reader x) throws SQLException {
+        getSQL().setNCharacterStream(parameterIndex, x);
+        pstmt.setNCharacterStream(parameterIndex, x);
     }
 
     @Override
-    public void setClob(int parameterIndex, Reader reader) throws SQLException {
-        pstmt.setClob(parameterIndex, reader);
+    public void setClob(int parameterIndex, Reader x) throws SQLException {
+        getSQL().setClob(parameterIndex, x);
+        pstmt.setClob(parameterIndex, x);
     }
 
     @Override
-    public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException {
-        pstmt.setBlob(parameterIndex, inputStream);
+    public void setBlob(int parameterIndex, InputStream x) throws SQLException {
+        getSQL().setBlob(parameterIndex, x);
+        pstmt.setBlob(parameterIndex, x);
     }
 
     @Override
-    public void setNClob(int parameterIndex, Reader reader) throws SQLException {
-        pstmt.setNClob(parameterIndex, reader);
+    public void setNClob(int parameterIndex, Reader x) throws SQLException {
+        getSQL().setNClob(parameterIndex, x);
+        pstmt.setNClob(parameterIndex, x);
     }
 
     @Override
@@ -396,5 +376,6 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
     public boolean isClosed() throws SQLException {
         return pstmt.isClosed();
     }
+
 
 }
