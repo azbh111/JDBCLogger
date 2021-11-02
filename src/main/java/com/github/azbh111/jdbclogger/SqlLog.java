@@ -20,6 +20,9 @@ public class SqlLog {
     }
 
     public static void sqllog(String str) {
+        if (str == null || str.startsWith("/* ping */")) {
+            return; // 不打印ping请求
+        }
         StackTraceInfo stackTraceInfo = StackTraceManager.getInstance().getStackTraceInfo();
         logger.log(stackTraceInfo.toString() + " " + str);
     }
