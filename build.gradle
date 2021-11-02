@@ -26,7 +26,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group 'com.github.azbh111'
-version = '0.0.9-SNAPSHOT'
+version = '0.0.9'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -173,8 +173,13 @@ publishing {
             name 'mavenCenter'
             def url_ = null
             if (project.version.endsWith("-SNAPSHOT")) {
+//                snapshot包去这里找
+//                https://oss.sonatype.org/service/local/repositories/snapshots/content/com/github/azbh111/JDBCLogger/
                 url_ = 'https://oss.sonatype.org/content/repositories/snapshots/'
             } else {
+//                release包去这里找
+//                https://oss.sonatype.org/service/local/repositories/releases/content/com/github/azbh111/JDBCLogger/
+//                https://maven.aliyun.com/nexus/content/groups/public/com/github/azbh111/JDBCLogger/
                 url_ = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
             }
             credentials {
