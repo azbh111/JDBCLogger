@@ -19,12 +19,12 @@ public class SqlLog {
         SqlLog.logger = logger;
     }
 
-    public static void sqllog(String str) {
-        if (str == null || str.startsWith("/* ping */")) {
-            return; // 不打印ping请求
+    public static void sqllog(long cost, String sql) {
+        if (ignore(sql)) {
+            return;
         }
         StackTraceInfo stackTraceInfo = StackTraceManager.getInstance().getStackTraceInfo();
-        logger.log(stackTraceInfo.toString() + " " + str);
+        logger.log(String.format("%s cost %s, %s", stackTraceInfo.toString(), cost, sql));
     }
 
     public static void log(String str) {
@@ -38,7 +38,7 @@ public class SqlLog {
         } finally {
             long stop = System.currentTimeMillis();
             long duration = stop - start;
-            SqlLog.sqllog(String.format("cost %s, %s", duration, QueryWrapper.toString(queryWrappers)));
+            SqlLog.sqllog(duration, QueryWrapper.toString(queryWrappers));
         }
     }
 
@@ -49,7 +49,14 @@ public class SqlLog {
         } finally {
             long stop = System.currentTimeMillis();
             long duration = stop - start;
-            SqlLog.sqllog(String.format("cost %s, %s", duration, sql));
+            SqlLog.sqllog(duration, sql);
         }
+    }
+
+    private static boolean ignore(String sql) {
+        if (sql == null || sql.startsWith("/* ping */")) {
+            return true; // 不打印ping请求
+        }
+        return false;
     }
 }
