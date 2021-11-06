@@ -77,7 +77,7 @@ jdbclogger.project.packageExecludes=com.github.azbh111.common
 ```
 
 3. 从maven中央仓库中下载JDBCLogger.jar
-https://repo1.maven.org/maven2/com/github/azbh111/JDBCLogger/0.0.4/JDBCLogger-0.0.4.jar
+https://repo1.maven.org/maven2/com/github/azbh111/JDBCLogger/0.0.9/JDBCLogger-0.0.9.jar
 
 4. 添加java启动参数
 
