@@ -7,7 +7,6 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class PreparedStatementWrapper extends StatementWrapper implements PreparedStatement {
@@ -17,6 +16,7 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
     public PreparedStatementWrapper(ConnectionWrapper con, PreparedStatement prepareStatement, String sql) {
         super(con, prepareStatement, sql);
         this.pstmt = prepareStatement;
+        getSQL();
     }
 
     @Override
@@ -37,9 +37,7 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
     // Batch
     @Override
     public void addBatch() throws SQLException {
-        QueryWrapper query = getSQL().copyNew();
-        queries.add(query);
-        index++;
+        query = null;
         pstmt.addBatch();
     }
 
@@ -377,5 +375,18 @@ public class PreparedStatementWrapper extends StatementWrapper implements Prepar
         return pstmt.isClosed();
     }
 
+    public QueryWrapper getSQL() {
+        if (query != null) {
+            return query;
+        }
+        if (queries.isEmpty()) {
+            query = new QueryWrapper(sql);
+            queries.add(query);
+        } else {
+            query = queries.get(queries.size() - 1).copyNew();
+            queries.add(query);
+        }
+        return query;
+    }
 
 }

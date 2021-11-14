@@ -33,6 +33,18 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'org.javassist:javassist:3.20.0-GA'
+
+    testCompile 'org.springframework.boot:spring-boot-starter:2.1.5.RELEASE'
+    testCompile "org.springframework.boot:spring-boot-starter-test:2.1.5.RELEASE"
+    testCompile "org.springframework.boot:spring-boot-starter-jdbc:2.1.5.RELEASE"
+    testCompile "com.h2database:h2:1.4.192"
+    testCompile 'uk.org.lidalia:sysout-over-slf4j:1.0.2'
+    testCompile 'org.slf4j:slf4j-api:1.7.26'
+    testCompile 'org.projectlombok:lombok:1.18.8'
+    testCompile 'org.projectlombok:lombok:1.18.8'
+    testCompile 'com.alibaba:fastjson:1.2.70'
+    testCompile 'com.baomidou:mybatis-plus-boot-starter:3.3.1'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.8'
 }
 
 shadowJar {
